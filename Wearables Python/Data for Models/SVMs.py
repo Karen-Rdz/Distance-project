@@ -17,6 +17,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
+from sklearn import preprocessing
 
 # Get data
 data_complete = scipy.io.loadmat('FeatureMatrices.mat')
@@ -51,10 +52,19 @@ for j in range (1, times+1):
         X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3) 
         #print(X_train)
 
+        # Standardization of data
+        scaler = preprocessing.StandardScaler().fit(X_train)
+        X_scaled = scaler.transform(X_train)
+
         # RBF, Polynomial and Linear Kernel
-        rbf = svm.SVC(kernel='rbf', gamma=0.6, C=1).fit(X_train, y_train)
-        poly = svm.SVC(kernel='poly', degree=3, C=1).fit(X_train, y_train)
-        linear = svm.SVC(kernel='linear').fit(X_train, y_train)
+        # rbf = svm.SVC(kernel='rbf', gamma=0.6, C=1).fit(X_train, y_train)
+        # poly = svm.SVC(kernel='poly', degree=3, C=1).fit(X_train, y_train)
+        # linear = svm.SVC(kernel='linear').fit(X_train, y_train)
+
+        # RBF, Polynomial and Linear Kernel with standardization
+        rbf = svm.SVC(kernel='rbf', gamma=0.6, C=1).fit(X_scaled, y_train)
+        poly = svm.SVC(kernel='poly', degree=3, C=1).fit(X_scaled, y_train)
+        linear = svm.SVC(kernel='linear').fit(X_scaled, y_train)
 
     #     poly_pred_test = poly.predict(X_test)
     #     rbf_pred_test = rbf.predict(X_test)

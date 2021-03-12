@@ -22,11 +22,29 @@ from sklearn.preprocessing import StandardScaler
 
 # Get data
 data_complete = scipy.io.loadmat('FeatureMatrices.mat')
+data_complete_pre = scipy.io.loadmat('FeatureMatrices_pre.mat')
+
 labels = data_complete['FMinfo']
 test = data_complete['WFM_1']
+test_pre = data_complete_pre['WFM_1']
 
-x = np.delete(test, 129, axis=1)
+x = np.delete(test, np.s_[120:130], axis=1)
+x_pre = np.delete(test_pre, 120, axis=1)
 y = test[:, 129]
+valid = False
+
+for i in range(len(x_pre[:, 0])):
+    for j in range(len(x_pre[0, :])):
+        if x_pre[i, j] <= 2 and x_pre[i, j] >= -2:  
+            valid = True
+        else:
+            valid = False
+            break
+    if valid:
+        x = np.vstack([x, x_pre[i, :]])
+        y = np.append(y, test_pre[i, 120])
+
+print(len(x), len(y))
 
 # Variables
 num_features = 10
